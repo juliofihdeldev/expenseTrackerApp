@@ -10,13 +10,7 @@ import {
 	FlatList,
 	TouchableOpacity,
 } from 'react-native';
-import { List } from 'react-native-paper';
-import { FAB } from 'react-native-paper';
 
-import ListCategory from '../component/ListCategory';
-import HeadersApps from '../component/HeaderApps';
-import ExpensForm from './ExpensForm';
-import Chart from './Chart';
 let { width, height } = Dimensions.get('window');
 import { GlobalContext } from '../context/GlobalState';
 import { Ionicons } from '@expo/vector-icons';
@@ -44,8 +38,6 @@ import {
 	Jost_800ExtraBold_Italic,
 	Jost_900Black_Italic,
 } from '@expo-google-fonts/jost';
-import Menu from '../component/Menu';
-import Home from '../component/Home';
 let primeText = (color, text = 'Some text ') => (
 	<Text
 		style={{
@@ -58,7 +50,7 @@ let primeText = (color, text = 'Some text ') => (
 	</Text>
 );
 
-export default function Feeds ({ navigation }){
+export default function Menu ({ navigation }){
 	let [
 		fontsLoaded,
 	] = useFonts({
@@ -82,11 +74,6 @@ export default function Feeds ({ navigation }){
 		Jost_900Black_Italic,
 	});
 
-	let { user, listBudget, getBudget } = useContext(GlobalContext);
-	let amount = listBudget.map((el) => parseFloat(el.amount)).reduce((el, acc) => el + acc, 0);
-	console.log('listBudget', JSON.stringify(listBudget));
-
-	const _handleSearch = () => console.log('Searching');
 	const [
 		modalVisible,
 		setModalVisible,
@@ -102,127 +89,68 @@ export default function Feeds ({ navigation }){
 		setMenuSelect,
 	] = useState(1);
 
-	const _handleCharts = () => {
-		setModalVisible(true);
-		setShowChart(true);
-	};
-
-	let close = () => {
-		setModalVisible(!modalVisible);
-	};
-	useEffect(() => {
-		return () => {
-			getBudget();
-		};
-	}, []);
-	const renderItem = ({ item }) => (
-		<View
-			style={{
-				flexDirection   : 'row',
-				alignItems      : 'center',
-				justifyContent  : 'space-between',
-				backgroundColor : '#444',
-				padding         : 8,
-				borderRadius    : 40,
-				margin          : 8,
-			}}>
-			<View
-				style={{
-					flexDirection  : 'row',
-					alignItems     : 'center',
-					justifyContent : 'space-between',
-				}}>
-				<View
-					style={{
-						backgroundColor :
-
-								item.type != 'depense' ? 'green' :
-								'red',
-						height          : 50,
-						width           : 50,
-						borderRadius    : 25,
-						textAlign       : 'center',
-						justifyContent  : 'center',
-						alignItems      : 'center',
-					}}>
-					<Text style={{ fontWeight: 'bold', color: 'white' }}> {item.motif.slice(0, 2)}</Text>
-				</View>
-
-				<View style={{ marginLeft: 12 }}>
-					<Text
-						numberOfLines={1}
-						ellipsizeMode='tail'
-						style={{ fontWeight: 'bold', color: 'white', fontSize: 15, width: width / 2.5 }}>
-						{' '}
-						{item.motif}
-					</Text>
-					<Text
-						numberOfLines={2}
-						style={{
-							color : 'white',
-							width : width / 2.38,
-						}}>
-						{' '}
-						{item.details}
-					</Text>
-				</View>
-			</View>
-			<View>
-				<Text>
-					{' '}
-					{primeText(
-
-							item.type != 'depense' ? 'green' :
-							'red',
-
-							item.type != 'depense' ? ` + ${item.amount} HTG` :
-							` ${item.amount} HTG`,
-					)}
-				</Text>
-			</View>
-		</View>
-	);
 	if (!fontsLoaded) {
 		return <AppLoading />;
 	}
 	else {
 		return (
-			<SafeAreaView style={styles.container}>
-				<View>
-					<HeadersApps />
-					<Home />
-				</View>
-
-				<FAB
-					style={styles.fab}
-					large
-					icon='plus'
-					// navigate to form but modal
-					// onPress={() => navigation.navigate('ExpensForm')}
-					onPress={() => {
-						setModalVisible(true);
-						setShowChart(false);
-					}}
-				/>
-
-				<Modal
-					animationType='slide'
-					transparent={true}
-					visible={modalVisible}
-					onRequestClose={() => {
-						Alert.alert('Modal has been closed.');
-					}}>
-					<View style={styles.centeredView}>
-						<View style={styles.modalView}>
+			<View
+				style={{
+					width          : width,
+					position       : 'absolute',
+					margin         : 4,
+					bottom         : 4,
+					padding        : 4,
+					paddingBottom  : 4,
+					flexDirection  : 'row',
+					justifyContent : 'space-arround',
+					flexWrap       : 'wrap',
+				}}>
+				{[
+					{ id: 1, icon: 'ios-home-outline', name: 'Home' },
+					{ id: 2, icon: 'settings-outline', name: 'Profile' },
+					{ id: 3, icon: 'newspaper-outline', name: 'News' },
+				].map((el) => (
+					<TouchableOpacity
+						onPress={() => {
+							setMenuSelect(el.id);
+						}}
+						style={[
+							styles.contentMenu,
 							{
-								showChart == true ? <Chart close={close} /> :
-								<ExpensForm close={close} />}
-						</View>
-					</View>
-				</Modal>
+								backgroundColor :
 
-				<Menu />
-			</SafeAreaView>
+										menuSelect == el.id ? '#fff' :
+										'#333',
+							},
+						]}>
+						<Ionicons
+							name={el.icon}
+							size={28}
+							color={
+
+									menuSelect == el.id ? '#333' :
+									'#333'
+							}
+							style={{
+								margin : 8,
+							}}
+						/>
+						<Text
+							style={[
+								styles.itemMenu,
+								{
+									color :
+
+											menuSelect == el.id ? '#333' :
+											'#fff',
+								},
+							]}>
+							{el.name}
+						</Text>
+					</TouchableOpacity>
+				))}
+			</View>
 		);
 	}
 }

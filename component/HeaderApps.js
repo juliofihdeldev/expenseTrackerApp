@@ -1,22 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import {
-	StyleSheet,
-	Text,
-	View,
-	SafeAreaView,
-	Dimensions,
-	Alert,
-	Modal,
-	FlatList,
-	TouchableOpacity,
-} from 'react-native';
-import { List } from 'react-native-paper';
-import { FAB } from 'react-native-paper';
-
-import ListCategory from '../component/ListCategory';
-import HeadersApps from '../component/HeaderApps';
-import ExpensForm from './ExpensForm';
-import Chart from './Chart';
+import { StyleSheet, Text, View, SafeAreaView, Dimensions } from 'react-native';
 let { width, height } = Dimensions.get('window');
 import { GlobalContext } from '../context/GlobalState';
 import { Ionicons } from '@expo/vector-icons';
@@ -44,8 +27,6 @@ import {
 	Jost_800ExtraBold_Italic,
 	Jost_900Black_Italic,
 } from '@expo-google-fonts/jost';
-import Menu from '../component/Menu';
-import Home from '../component/Home';
 let primeText = (color, text = 'Some text ') => (
 	<Text
 		style={{
@@ -58,7 +39,7 @@ let primeText = (color, text = 'Some text ') => (
 	</Text>
 );
 
-export default function Feeds ({ navigation }){
+export default function HeaderApps ({ navigation }){
 	let [
 		fontsLoaded,
 	] = useFonts({
@@ -115,124 +96,49 @@ export default function Feeds ({ navigation }){
 			getBudget();
 		};
 	}, []);
-	const renderItem = ({ item }) => (
-		<View
-			style={{
-				flexDirection   : 'row',
-				alignItems      : 'center',
-				justifyContent  : 'space-between',
-				backgroundColor : '#444',
-				padding         : 8,
-				borderRadius    : 40,
-				margin          : 8,
-			}}>
-			<View
-				style={{
-					flexDirection  : 'row',
-					alignItems     : 'center',
-					justifyContent : 'space-between',
-				}}>
-				<View
-					style={{
-						backgroundColor :
 
-								item.type != 'depense' ? 'green' :
-								'red',
-						height          : 50,
-						width           : 50,
-						borderRadius    : 25,
-						textAlign       : 'center',
-						justifyContent  : 'center',
-						alignItems      : 'center',
-					}}>
-					<Text style={{ fontWeight: 'bold', color: 'white' }}> {item.motif.slice(0, 2)}</Text>
-				</View>
-
-				<View style={{ marginLeft: 12 }}>
-					<Text
-						numberOfLines={1}
-						ellipsizeMode='tail'
-						style={{ fontWeight: 'bold', color: 'white', fontSize: 15, width: width / 2.5 }}>
-						{' '}
-						{item.motif}
-					</Text>
-					<Text
-						numberOfLines={2}
-						style={{
-							color : 'white',
-							width : width / 2.38,
-						}}>
-						{' '}
-						{item.details}
-					</Text>
-				</View>
-			</View>
-			<View>
-				<Text>
-					{' '}
-					{primeText(
-
-							item.type != 'depense' ? 'green' :
-							'red',
-
-							item.type != 'depense' ? ` + ${item.amount} HTG` :
-							` ${item.amount} HTG`,
-					)}
-				</Text>
-			</View>
-		</View>
-	);
 	if (!fontsLoaded) {
 		return <AppLoading />;
 	}
 	else {
 		return (
-			<SafeAreaView style={styles.container}>
+			<View
+				style={{
+					flexDirection  : 'row',
+					alignItems     : 'flex-start',
+					justifyContent : 'space-between',
+				}}>
 				<View>
-					<HeadersApps />
-					<Home />
+					<Text style={styles.title}> G Morning, </Text>
+					<Text style={styles.titleNAme}> Julio </Text>
 				</View>
 
-				<FAB
-					style={styles.fab}
-					large
-					icon='plus'
-					// navigate to form but modal
-					// onPress={() => navigation.navigate('ExpensForm')}
-					onPress={() => {
-						setModalVisible(true);
-						setShowChart(false);
-					}}
-				/>
-
-				<Modal
-					animationType='slide'
-					transparent={true}
-					visible={modalVisible}
-					onRequestClose={() => {
-						Alert.alert('Modal has been closed.');
-					}}>
-					<View style={styles.centeredView}>
-						<View style={styles.modalView}>
-							{
-								showChart == true ? <Chart close={close} /> :
-								<ExpensForm close={close} />}
-						</View>
-					</View>
-				</Modal>
-
-				<Menu />
-			</SafeAreaView>
+				<View style={styles.contentIcon}>
+					<Ionicons
+						name='ios-search'
+						size={32}
+						color='#eee'
+						onPress={_handleSearch}
+						style={{
+							margin : 8,
+						}}
+					/>
+					<Ionicons
+						name='ios-filter'
+						size={32}
+						color='#eee'
+						onPress={_handleSearch}
+						style={{
+							margin : 8,
+						}}
+					/>
+				</View>
+			</View>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-	container      : {
-		flex            : 1,
-		width           : width,
-		backgroundColor : '#000',
-	},
 	contentMenu    : {
 		flexDirection  : 'row',
 		justifyContent : 'flex-start',

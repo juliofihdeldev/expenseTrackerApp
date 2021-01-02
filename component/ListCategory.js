@@ -1,33 +1,19 @@
-import React from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, Dimensions, Image, ScrollView, TouchableOpacity } from 'react-native';
 let { width, height } = Dimensions.get('window');
+import { GlobalContext } from '../context/GlobalState';
 
 export default function ListCategory (){
+	let { user, addBudget, categories } = useContext(GlobalContext);
+
 	let filterCat = (item) => {
-		setCategory(item.id);
+		setCategorySelect(item.id);
 	};
 	const [
 		selectCategory,
-		setCategory,
+		setCategorySelect,
 	] = React.useState(1);
 
-	let categories = [
-		{
-			id             : 1,
-			category_image : 'https://cdn.iconscout.com/icon/free/png-256/fast-food-1851561-1569286.png',
-			category_name  : 'Food & drink',
-		},
-		{
-			id             : 2,
-			category_image : 'https://cdn.iconscout.com/icon/free/png-256/fast-food-1851561-1569286.png',
-			category_name  : 'Transportation',
-		},
-		{
-			id             : 3,
-			category_image : 'https://cdn.iconscout.com/icon/free/png-256/fast-food-1851561-1569286.png',
-			category_name  : 'Electricity',
-		},
-	];
 	return (
 		<ScrollView horizontal={true} style={{ marginTop: 10 }} showsHorizontalScrollIndicator={false}>
 			<View style={styles.viewButtons}>
@@ -39,7 +25,7 @@ export default function ListCategory (){
 								{
 									backgroundColor :
 
-											item.id == selectCategory ? '#ccc' :
+											item.id == selectCategory ? 'blue' :
 											'#fff',
 								},
 							]}>
@@ -47,15 +33,27 @@ export default function ListCategory (){
 								style={[
 									styles.contenCategory,
 								]}>
-								<Image
+								{/* <Image
 									source={{ uri: item.category_image }}
 									style={{
 										width       : 20,
 										height      : 20,
 										marginRight : 6,
 									}}
-								/>
-								<Text style={styles.textButton}>{item.category_name}</Text>
+								/> */}
+								<Text
+									style={[
+										styles.textButton,
+										{
+											fontWeight : 'bold',
+											color      :
+
+													item.id == selectCategory ? 'white' :
+													'#000',
+										},
+									]}>
+									{item.category_name}
+								</Text>
 							</View>
 						</View>
 					</TouchableOpacity>

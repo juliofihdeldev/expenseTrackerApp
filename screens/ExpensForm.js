@@ -1,21 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Dimensions, StyleSheet, Text, View, TextInput } from 'react-native';
 import { Button } from 'react-native-paper';
-import ListCategory from '../component/ListCategory';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-
+import { GlobalContext } from '../context/GlobalState';
 let { width, height } = Dimensions.get('window');
+import { Container, Header, Content, Form, Item, Input, Label } from 'native-base';
+let start = Date.now();
 export default function ExpensForm ({ navigation, close }){
+	let { user, addBudget, categories } = useContext(GlobalContext);
+
 	const [
 		text,
 		setText,
 	] = React.useState('');
+
+	const [
+		motif,
+		setMotif,
+	] = React.useState('');
+
+	const [
+		amount,
+		setAmount,
+	] = React.useState('');
+
 	const [
 		date,
 		setDate,
-	] = useState(new Date(1598051730000));
+	] = useState(start);
+
 	const [
 		mode,
 		setMode,
@@ -39,135 +54,219 @@ export default function ExpensForm ({ navigation, close }){
 	const showDatepicker = () => {
 		showMode('date');
 	};
+	let categoriesChoices = [
+		'Food & drinks',
+		'Transport',
+		'LifeStyle',
+		'Alcool',
+		'Work',
+		'Family',
+	];
+
+	// let handleMutilteSelect = (item) => {
+	// 	var index = selectmultiple.indexOf(item);
+
+	// 	if (index > -1) {
+	// 		selectmultiple.splice(index, 1);
+	// 	}
+	// 	else {
+	// 		selectmultiple.push(item);
+	// 	}
+	// };
+
 	const [
 		checked,
 		setChecked,
 	] = React.useState('depense');
 
 	return (
-		<ScrollView style={styles.container}>
-			<ScrollView>
-				<View style={styles.radioGroup}>
-					<TouchableOpacity
-						style={[
-							styles.radioContent,
-							{
-								padding :
+		<Container style={styles.container}>
+			<Content>
+				<Form>
+					<View style={styles.radioGroup}>
+						<TouchableOpacity
+							style={[
+								styles.radioContent,
+								{
+									padding :
 
-										checked === 'gagner' ? 2 :
-										0,
-							},
-						]}
-						onPress={() => setChecked('gagner')}>
-						<Text style={styles.radioText}> Gagner</Text>
-						<RadioButton
-							color='white'
-							value='gagner'
-							status={
+											checked === 'gagner' ? 2 :
+											0,
+								},
+							]}
+							onPress={() => setChecked('gagner')}>
+							<Text style={styles.radioText}> Income</Text>
+							<RadioButton
+								color='white'
+								value='gagner'
+								status={
 
-									checked === 'gagner' ? 'checked' :
-									'unchecked'
-							}
-							onPress={() => setChecked('gagner')}
-						/>
-					</TouchableOpacity>
-					<TouchableOpacity
-						style={[
-							styles.radioContentRed,
-
-							{
-								padding :
-
-										checked === 'depense' ? 2 :
-										0,
-							},
-						]}
-						onPress={() => setChecked('depense')}>
-						<Text style={styles.radioText}> Depense</Text>
-						<RadioButton
-							color='white'
-							value='depense'
-							status={
-
-									checked === 'depense' ? 'checked' :
-									'unchecked'
-							}
-						/>
-					</TouchableOpacity>
-					<View style={{ position: 'absolute', marginLeft: width - 180, width: 140 }}>
-						<DateTimePicker
-							testID='dateTimePicker'
-							value={date}
-							mode={mode}
-							is24Hour={true}
-							display='default'
-							onChange={onChange}
-						/>
-					</View>
-				</View>
-				<View
-					style={{
-						width         : width,
-						flexDirection : 'row',
-						flexWrap      : 'wrap',
-					}}>
-					{[
-						'Food & drinks',
-						'Transport',
-						'Bitch',
-						'LifeStyle',
-						'Alcool',
-						'Work',
-						'Friends',
-						'Family',
-					].map((el) => (
-						<TouchableOpacity style={styles.textCatContent}>
-							<Text style={styles.textCat}> {el} </Text>
+										checked === 'gagner' ? 'checked' :
+										'unchecked'
+								}
+								onPress={() => setChecked('gagner')}
+							/>
 						</TouchableOpacity>
-					))}
-					<TouchableOpacity style={styles.textCatContent}>
-						<Text style={styles.textCat}> Others </Text>
-					</TouchableOpacity>
-				</View>
-				<TextInput
-					placeholder='More informations'
-					multiline={true}
-					style={{
-						height      : 120,
-						borderColor : '#fff',
-						borderWidth : 1,
-						margin      : 12,
-						fontSize    : 17,
-						color       : '#444',
-					}}
-					value={text}
-					keyboardType='twitter'
-					numberOfLines={4}
-					onChangeText={(text) => setText(text)}
-				/>
+						<TouchableOpacity
+							style={[
+								styles.radioContentRed,
 
-				<Button
-					style={{
-						marginTop : 0,
-						width     : 40,
-						position  : 'absolute',
-						right     : 0,
-						fontSize  : 132,
-						zIndex    : 12,
-					}}
-					onPress={() => close()}>
-					<Text style={{ fontSize: 32 }}> X</Text>
-				</Button>
-			</ScrollView>
-		</ScrollView>
+								{
+									padding :
+
+											checked === 'depense' ? 2 :
+											0,
+								},
+							]}
+							onPress={() => setChecked('depense')}>
+							<Text style={styles.radioText}> Expense</Text>
+							<RadioButton
+								color='white'
+								value='depense'
+								status={
+
+										checked === 'depense' ? 'checked' :
+										'unchecked'
+								}
+							/>
+						</TouchableOpacity>
+						{/* <View style={{ position: 'absolute', marginLeft: width - 180, width: 140 }}>
+							<DateTimePicker
+								testID='dateTimePicker'
+								value={date}
+								mode={mode}
+								is24Hour={true}
+								display='default'
+								onChange={onChange}
+							/>
+						</View> */}
+					</View>
+					<View
+						style={{
+							width         : width,
+							margin        : 4,
+							padding       : 8,
+							flexDirection : 'row',
+							flexWrap      : 'wrap',
+						}}>
+						{categoriesChoices.map((el) => (
+							<TouchableOpacity style={styles.textCatContent}>
+								<Text style={styles.textCat}> {el} </Text>
+							</TouchableOpacity>
+						))}
+
+						<TouchableOpacity style={styles.textCatContent}>
+							<Text style={styles.textCat}> Others </Text>
+						</TouchableOpacity>
+					</View>
+
+					<TextInput
+						placeholder='Motif'
+						style={{
+							backgroundColor : '#eee',
+							borderRadius    : 10,
+							borderColor     : '#fff',
+							borderWidth     : 1,
+							margin          : 8,
+							padding         : 12,
+							fontSize        : 17,
+							color           : '#444',
+						}}
+						value={motif}
+						numberOfLines={1}
+						onChangeText={(text) => setMotif(text)}
+					/>
+					<TextInput
+						placeholder='Amount'
+						style={{
+							backgroundColor : '#eee',
+							borderRadius    : 10,
+							borderColor     : '#fff',
+							borderWidth     : 1,
+							margin          : 8,
+							padding         : 12,
+							fontSize        : 17,
+							color           : '#444',
+						}}
+						value={amount}
+						keyboardType='phone-pad'
+						numberOfLines={1}
+						onChangeText={(text) => setAmount(text)}
+					/>
+					<TextInput
+						placeholder='More informations'
+						multiline={true}
+						style={{
+							height          : 80,
+							backgroundColor : '#eee',
+							borderRadius    : 10,
+							borderColor     : '#fff',
+							borderWidth     : 1,
+							margin          : 8,
+							padding         : 12,
+							fontSize        : 17,
+							color           : '#444',
+						}}
+						value={text}
+						keyboardType='twitter'
+						numberOfLines={4}
+						onChangeText={(text) => setText(text)}
+					/>
+
+					<View
+						style={{
+							width          : width - 40,
+							padding        : 8,
+							justifyContent : 'space-between',
+							flexDirection  : 'row',
+							alignItems     : 'center',
+						}}>
+						<Button
+							style={{
+								width           : width / 2.3,
+								backgroundColor : '#eee',
+								padding         : 4,
+							}}
+							onPress={() => close()}>
+							<Text style={{ fontSize: 17, color: '#ccc' }}> Cancel </Text>
+						</Button>
+						<Button
+							style={{
+								width           : width / 2,
+								backgroundColor : 'blue',
+								padding         : 4,
+							}}
+							onPress={() => {
+								addBudget({
+									type       : checked,
+									motif      : motif,
+									amount     :
+
+											checked == 'depense' ? -amount :
+											amount,
+									details    : text,
+									categories : [
+										'Bills',
+										'Home',
+									],
+									date       : date,
+								});
+								close();
+							}}>
+							<Text style={{ fontSize: 17 }}> Ajouter</Text>
+						</Button>
+					</View>
+				</Form>
+			</Content>
+		</Container>
 	);
 }
 
 const styles = StyleSheet.create({
 	container       : {
-		flex            : 1,
 		marginTop       : 10,
 		backgroundColor : '#fff',
+		borderRadius    : 40,
 	},
 	radioContent    : {
 		flexDirection   : 'row',
@@ -187,7 +286,7 @@ const styles = StyleSheet.create({
 		justifyContent  : 'flex-start',
 		alignItems      : 'center',
 		height          : 40,
-		margin          : 10,
+		margin          : 16,
 	},
 	radioText       : {
 		fontSize      : 14,

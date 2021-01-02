@@ -11,15 +11,9 @@ import {
 	TouchableOpacity,
 } from 'react-native';
 import { List } from 'react-native-paper';
-import { FAB } from 'react-native-paper';
-
 import ListCategory from '../component/ListCategory';
-import HeadersApps from '../component/HeaderApps';
-import ExpensForm from './ExpensForm';
-import Chart from './Chart';
 let { width, height } = Dimensions.get('window');
 import { GlobalContext } from '../context/GlobalState';
-import { Ionicons } from '@expo/vector-icons';
 import AppLoading from 'expo-app-loading';
 var _ = require('lodash');
 
@@ -44,8 +38,7 @@ import {
 	Jost_800ExtraBold_Italic,
 	Jost_900Black_Italic,
 } from '@expo-google-fonts/jost';
-import Menu from '../component/Menu';
-import Home from '../component/Home';
+
 let primeText = (color, text = 'Some text ') => (
 	<Text
 		style={{
@@ -58,7 +51,7 @@ let primeText = (color, text = 'Some text ') => (
 	</Text>
 );
 
-export default function Feeds ({ navigation }){
+export default function Home ({ navigation }){
 	let [
 		fontsLoaded,
 	] = useFonts({
@@ -86,30 +79,11 @@ export default function Feeds ({ navigation }){
 	let amount = listBudget.map((el) => parseFloat(el.amount)).reduce((el, acc) => el + acc, 0);
 	console.log('listBudget', JSON.stringify(listBudget));
 
-	const _handleSearch = () => console.log('Searching');
-	const [
-		modalVisible,
-		setModalVisible,
-	] = useState(false);
-
 	const [
 		showChart,
 		setShowChart,
 	] = useState(false);
 
-	const [
-		menuSelect,
-		setMenuSelect,
-	] = useState(1);
-
-	const _handleCharts = () => {
-		setModalVisible(true);
-		setShowChart(true);
-	};
-
-	let close = () => {
-		setModalVisible(!modalVisible);
-	};
 	useEffect(() => {
 		return () => {
 			getBudget();
@@ -187,52 +161,44 @@ export default function Feeds ({ navigation }){
 	}
 	else {
 		return (
-			<SafeAreaView style={styles.container}>
-				<View>
-					<HeadersApps />
-					<Home />
-				</View>
+			<View>
+				<List.Section>
+					<View>
+						<List.Subheader style={{ color: '#eee' }}> Janvier 2021 </List.Subheader>
 
-				<FAB
-					style={styles.fab}
-					large
-					icon='plus'
-					// navigate to form but modal
-					// onPress={() => navigation.navigate('ExpensForm')}
-					onPress={() => {
-						setModalVisible(true);
-						setShowChart(false);
-					}}
-				/>
-
-				<Modal
-					animationType='slide'
-					transparent={true}
-					visible={modalVisible}
-					onRequestClose={() => {
-						Alert.alert('Modal has been closed.');
-					}}>
-					<View style={styles.centeredView}>
-						<View style={styles.modalView}>
-							{
-								showChart == true ? <Chart close={close} /> :
-								<ExpensForm close={close} />}
-						</View>
+						<Text style={styles.titleNAme}> {amount} HTG </Text>
 					</View>
-				</Modal>
+					<ListCategory fromScreen='feeds' />
 
-				<Menu />
-			</SafeAreaView>
+					<View style={styles.contentList}>
+						<View>
+							<Text style={styles.currentDay}> Today </Text>
+						</View>
+						<View
+							style={{
+								height : 80,
+							}}>
+							<FlatList
+								horizontal={true}
+								data={listBudget.slice(0, 2)}
+								renderItem={renderItem}
+								keyExtractor={(item) => item.id}
+							/>
+						</View>
+
+						<View>
+							<Text style={styles.currentDay}> 04 janvier </Text>
+						</View>
+
+						<FlatList data={listBudget} renderItem={renderItem} keyExtractor={(item) => item.id} />
+					</View>
+				</List.Section>
+			</View>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-	container      : {
-		flex            : 1,
-		width           : width,
-		backgroundColor : '#000',
-	},
 	contentMenu    : {
 		flexDirection  : 'row',
 		justifyContent : 'flex-start',

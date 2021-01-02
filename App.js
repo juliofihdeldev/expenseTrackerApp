@@ -4,37 +4,42 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Feeds from './screens/Feeds';
 import ExpensForm from './screens/ExpensForm';
+import AppIntro from './screens/AppIntro';
 
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import { GlobalProvider } from './context/GlobalState';
 const Stack = createStackNavigator();
 
 const theme = {
 	...DefaultTheme,
 	colors : {
 		...DefaultTheme.colors,
-		primary : 'black',
-		accent  : '#ccc',
+		primary : '#fff',
+		accent  : '#eee',
 	},
 };
 
 export default function App (){
 	return (
 		<PaperProvider theme={theme}>
-			<NavigationContainer>
-				<Stack.Navigator
-					mode='modal'
-					initialRouteName='Feeds'
-					screenOptions={{
-						gestureEnabled : true,
-					}}>
-					<Stack.Screen name='Feeds' component={Feeds} options={{ headerShown: false }} />
-					<Stack.Screen name='ExpensForm' component={ExpensForm} options={{ headerShown: false }} />
-				</Stack.Navigator>
-			</NavigationContainer>
+			<GlobalProvider>
+				<NavigationContainer>
+					<Stack.Navigator
+						mode='modal'
+						initialRouteName='AppIntro'
+						screenOptions={{
+							gestureEnabled : true,
+						}}>
+						<Stack.Screen name='Feeds' component={Feeds} options={{ headerShown: false }} />
+						<Stack.Screen name='AppIntro' component={AppIntro} options={{ headerShown: false }} />
+
+						<Stack.Screen name='ExpensForm' component={ExpensForm} options={{ headerShown: false }} />
+					</Stack.Navigator>
+				</NavigationContainer>
+			</GlobalProvider>
 			<StatusBar style='auto' />
 		</PaperProvider>
 	);
