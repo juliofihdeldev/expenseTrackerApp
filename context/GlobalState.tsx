@@ -4,28 +4,42 @@ import AppReducer from './AppReducer';
 let categories = [
 	{
 		id             : 1,
-		category_image : 'https://cdn.iconscout.com/icon/free/png-256/fast-food-1851561-1569286.png',
 		category_name  : 'Food & drink',
 	},
 	{
 		id             : 2,
-		category_image : 'https://www.flaticon.com/svg/static/icons/svg/215/215856.svg',
 		category_name  : 'Transportation',
 	},
 	{
 		id             : 3,
-		category_image : 'https://cdn3.iconfinder.com/data/icons/energy-53/100/power_energy-07-512.png',
-		category_name  : 'Electricity',
+		category_name  : 'Home',
+	},
+	{
+		id             : 4,
+		category_name  : 'School',
+	},
+	{
+		id             : 5,
+		category_name  : 'Communication',
+	},
+	{
+		id             : 6,
+		category_name  : 'Works',
+	},
+	{
+		id             : 7,
+		category_name  : 'Autres',
 	},
 ];
 
-const initialState = {
+
+ const initialState = {
 	user: {},
 	error: null,
 	laoding: false,
 	categories: categories,
 	listBudget: [],
-	viewIntro: false
+	viewIntro: true
 };
 
 export const GlobalContext = createContext(initialState);
@@ -73,11 +87,10 @@ export const GlobalProvider = ({ children }: any) => {
 
 	async function getBudget() {
 		let userData = await AsyncStorage.getItem('userLocalData');
-		userData = JSON.parse(userData);
-
+		userData = JSON.parse(userData) || [];
 			dispatch({
 				type: 'GET_BUDGET',
-				payload:userData
+				payload: userData
 			});
 	}
 

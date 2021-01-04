@@ -11,6 +11,7 @@ import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { GlobalProvider } from './context/GlobalState';
+import Home from './component/Home';
 const Stack = createStackNavigator();
 
 const theme = {
@@ -35,7 +36,7 @@ export default function App (){
 						}}>
 						<Stack.Screen name='Feeds' component={Feeds} options={{ headerShown: false }} />
 						<Stack.Screen name='AppIntro' component={AppIntro} options={{ headerShown: false }} />
-
+						<Stack.Screen name='Home' component={Home} options={{ headerShown: false }} />
 						<Stack.Screen name='ExpensForm' component={ExpensForm} options={{ headerShown: false }} />
 					</Stack.Navigator>
 				</NavigationContainer>

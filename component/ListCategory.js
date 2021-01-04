@@ -3,16 +3,12 @@ import { StyleSheet, Text, View, SafeAreaView, Dimensions, Image, ScrollView, To
 let { width, height } = Dimensions.get('window');
 import { GlobalContext } from '../context/GlobalState';
 
-export default function ListCategory (){
+export default function ListCategory ({ selectCategory, setCategorySelect }){
 	let { user, addBudget, categories } = useContext(GlobalContext);
 
 	let filterCat = (item) => {
 		setCategorySelect(item.id);
 	};
-	const [
-		selectCategory,
-		setCategorySelect,
-	] = React.useState(1);
 
 	return (
 		<ScrollView horizontal={true} style={{ marginTop: 10 }} showsHorizontalScrollIndicator={false}>

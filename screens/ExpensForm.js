@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Dimensions, StyleSheet, Text, View, TextInput } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, TextInput, Alert } from 'react-native';
 import { Button } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
@@ -7,7 +7,8 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { GlobalContext } from '../context/GlobalState';
 let { width, height } = Dimensions.get('window');
 import { Container, Header, Content, Form, Item, Input, Label } from 'native-base';
-let start = Date.now();
+let start = new Date();
+
 export default function ExpensForm ({ navigation, close }){
 	let { user, addBudget, categories } = useContext(GlobalContext);
 
@@ -15,6 +16,11 @@ export default function ExpensForm ({ navigation, close }){
 		text,
 		setText,
 	] = React.useState('');
+
+	const [
+		categoriesChoices,
+		setCategorySelection,
+	] = React.useState(categories);
 
 	const [
 		motif,
@@ -27,9 +33,9 @@ export default function ExpensForm ({ navigation, close }){
 	] = React.useState('');
 
 	const [
-		date,
+		theDate,
 		setDate,
-	] = useState(start);
+	] = useState(`${start}`.slice(4, 15));
 
 	const [
 		mode,
@@ -40,39 +46,21 @@ export default function ExpensForm ({ navigation, close }){
 		setShow,
 	] = useState(false);
 
-	const onChange = (event, selectedDate) => {
-		const currentDate = selectedDate || date;
-		setShow(Platform.OS === 'ios');
-		setDate(currentDate);
-	};
-
 	const showMode = (currentMode) => {
 		setShow(true);
 		setMode(currentMode);
 	};
 
-	const showDatepicker = () => {
-		showMode('date');
+	let handleMutilteSelect = (item) => {
+		categoriesChoices.map((el) => {
+			if (el.category_name == item.category_name) {
+				el['select'] = !el.select;
+			}
+		});
+		setCategorySelection([
+			...categoriesChoices,
+		]);
 	};
-	let categoriesChoices = [
-		'Food & drinks',
-		'Transport',
-		'LifeStyle',
-		'Alcool',
-		'Work',
-		'Family',
-	];
-
-	// let handleMutilteSelect = (item) => {
-	// 	var index = selectmultiple.indexOf(item);
-
-	// 	if (index > -1) {
-	// 		selectmultiple.splice(index, 1);
-	// 	}
-	// 	else {
-	// 		selectmultiple.push(item);
-	// 	}
-	// };
 
 	const [
 		checked,
@@ -150,14 +138,19 @@ export default function ExpensForm ({ navigation, close }){
 							flexWrap      : 'wrap',
 						}}>
 						{categoriesChoices.map((el) => (
-							<TouchableOpacity style={styles.textCatContent}>
-								<Text style={styles.textCat}> {el} </Text>
+							<TouchableOpacity
+								style={[
+									styles.textCatContent,
+									{
+										backgroundColor :
+											el.select ? '#cce' :
+											'#eee',
+									},
+								]}
+								onPress={() => handleMutilteSelect(el)}>
+								<Text style={styles.textCat}> {el.category_name} </Text>
 							</TouchableOpacity>
 						))}
-
-						<TouchableOpacity style={styles.textCatContent}>
-							<Text style={styles.textCat}> Others </Text>
-						</TouchableOpacity>
 					</View>
 
 					<TextInput
@@ -237,23 +230,37 @@ export default function ExpensForm ({ navigation, close }){
 								padding         : 4,
 							}}
 							onPress={() => {
-								addBudget({
-									type       : checked,
-									motif      : motif,
-									amount     :
+								Alert.alert(
+									'Confirmations',
+									'Are you sure ? ',
+									[
+										{
+											text    : 'Cancel',
+											onPress : () => console.log('Cancel Pressed'),
+											style   : 'cancel',
+										},
+										{
+											text    : 'OK',
+											onPress : () => {
+												addBudget({
+													type       : checked,
+													motif      : motif,
+													amount     :
 
-											checked == 'depense' ? -amount :
-											amount,
-									details    : text,
-									categories : [
-										'Bills',
-										'Home',
+															checked == 'depense' ? -amount :
+															amount,
+													details    : text,
+													categories : categoriesChoices.filter((el) => el.select == true),
+													date       : theDate,
+												});
+												close();
+											},
+										},
 									],
-									date       : date,
-								});
-								close();
+									{ cancelable: false },
+								);
 							}}>
-							<Text style={{ fontSize: 17 }}> Ajouter</Text>
+							<Text style={{ fontSize: 17 }}> Add</Text>
 						</Button>
 					</View>
 				</Form>

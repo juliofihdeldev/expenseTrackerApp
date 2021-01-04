@@ -15,8 +15,12 @@ import ListCategory from '../component/ListCategory';
 let { width, height } = Dimensions.get('window');
 import { GlobalContext } from '../context/GlobalState';
 import AppLoading from 'expo-app-loading';
-var _ = require('lodash');
 
+let currentMonth = new Date();
+
+function currentFormat (amount){
+	return Number(amount).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+}
 import {
 	useFonts,
 	Jost_100Thin,
@@ -38,6 +42,8 @@ import {
 	Jost_800ExtraBold_Italic,
 	Jost_900Black_Italic,
 } from '@expo-google-fonts/jost';
+import moment from 'moment';
+moment().format();
 
 let primeText = (color, text = 'Some text ') => (
 	<Text
@@ -50,6 +56,21 @@ let primeText = (color, text = 'Some text ') => (
 		{text}{' '}
 	</Text>
 );
+function groupingBydata (data){
+	if (data == null) return [];
+	let group = [];
+	data.forEach((el) => {
+		if (!group[el.date]) {
+			group[el.date] = {
+				day  : el.date,
+				data : [],
+			};
+		}
+		group[el.date].data.push(el);
+	});
+	console.log(Object.values(group));
+	return Object.values(group);
+}
 
 export default function Home ({ navigation }){
 	let [
@@ -77,18 +98,36 @@ export default function Home ({ navigation }){
 
 	let { user, listBudget, getBudget } = useContext(GlobalContext);
 	let amount = listBudget.map((el) => parseFloat(el.amount)).reduce((el, acc) => el + acc, 0);
-	console.log('listBudget', JSON.stringify(listBudget));
 
 	const [
-		showChart,
-		setShowChart,
-	] = useState(false);
+		donnees,
+		setData,
+	] = React.useState([]);
 
 	useEffect(() => {
-		return () => {
+		async function fetchData (){
 			getBudget();
-		};
+		}
+		fetchData();
 	}, []);
+
+	const [
+		selectCategory,
+		setCategorySelect,
+	] = React.useState(1);
+
+	//Filter list categories
+	function filterListByCat (array, key){
+		let resultArray = [];
+		array.forEach((el) => {
+			let fr = el.result.filter((da) => da.categories.includes(key));
+			if (fr.length > 0) {
+				resultArray.push(el);
+			}
+		});
+		return resultArray;
+	}
+
 	const renderItem = ({ item }) => (
 		<View
 			style={{
@@ -126,7 +165,7 @@ export default function Home ({ navigation }){
 					<Text
 						numberOfLines={1}
 						ellipsizeMode='tail'
-						style={{ fontWeight: 'bold', color: 'white', fontSize: 15, width: width / 2.5 }}>
+						style={{ fontWeight: 'bold', color: 'white', fontSize: 15, width: width / 2.8 }}>
 						{' '}
 						{item.motif}
 					</Text>
@@ -134,7 +173,7 @@ export default function Home ({ navigation }){
 						numberOfLines={2}
 						style={{
 							color : 'white',
-							width : width / 2.38,
+							width : width / 2.8,
 						}}>
 						{' '}
 						{item.details}
@@ -149,13 +188,14 @@ export default function Home ({ navigation }){
 							item.type != 'depense' ? 'green' :
 							'red',
 
-							item.type != 'depense' ? ` + ${item.amount} HTG` :
-							` ${item.amount} HTG`,
+							item.type != 'depense' ? `+ ${currentFormat(item.amount)} HTG` :
+							` ${currentFormat(item.amount)} HTG`,
 					)}
 				</Text>
 			</View>
 		</View>
 	);
+
 	if (!fontsLoaded) {
 		return <AppLoading />;
 	}
@@ -164,33 +204,46 @@ export default function Home ({ navigation }){
 			<View>
 				<List.Section>
 					<View>
-						<List.Subheader style={{ color: '#eee' }}> Janvier 2021 </List.Subheader>
+						<List.Subheader style={{ color: '#eee' }}> {`${currentMonth}`.slice(4, 15)} </List.Subheader>
 
-						<Text style={styles.titleNAme}> {amount} HTG </Text>
+						<Text style={styles.titleNAme}> {currentFormat(amount)} HTG </Text>
 					</View>
-					<ListCategory fromScreen='feeds' />
+					<ListCategory
+						fromScreen='feeds'
+						selectCategory={selectCategory}
+						setCategorySelect={setCategorySelect}
+					/>
 
 					<View style={styles.contentList}>
 						<View>
-							<Text style={styles.currentDay}> Today </Text>
+							<View>
+								{groupingBydata(listBudget).map((el, index) => {
+									return (
+										<View>
+											<Text style={styles.currentDay}>{el.day}</Text>
+											<FlatList
+												data={el.data}
+												renderItem={renderItem}
+												keyExtractor={(item) => item.id}
+											/>
+										</View>
+									);
+								})}
+								{
+									listBudget.length == 0 ? <View>
+										<Text
+											style={{
+												textAlign : 'center',
+												marginTop : 40,
+												fontSize  : 22,
+												color     : '#fff',
+											}}>
+											Start track your money now !
+										</Text>
+									</View> :
+									null}
+							</View>
 						</View>
-						<View
-							style={{
-								height : 80,
-							}}>
-							<FlatList
-								horizontal={true}
-								data={listBudget.slice(0, 2)}
-								renderItem={renderItem}
-								keyExtractor={(item) => item.id}
-							/>
-						</View>
-
-						<View>
-							<Text style={styles.currentDay}> 04 janvier </Text>
-						</View>
-
-						<FlatList data={listBudget} renderItem={renderItem} keyExtractor={(item) => item.id} />
 					</View>
 				</List.Section>
 			</View>

@@ -67,7 +67,9 @@ export default function HeaderApps ({ navigation }){
 	let amount = listBudget.map((el) => parseFloat(el.amount)).reduce((el, acc) => el + acc, 0);
 	console.log('listBudget', JSON.stringify(listBudget));
 
-	const _handleSearch = () => console.log('Searching');
+	const _handleSearch = () => alert('Will search by any tag');
+	const _handleSearchFilter = () => alert('Filter by interval date ');
+
 	const [
 		modalVisible,
 		setModalVisible,
@@ -116,7 +118,7 @@ export default function HeaderApps ({ navigation }){
 				<View style={styles.contentIcon}>
 					<Ionicons
 						name='ios-search'
-						size={32}
+						size={28}
 						color='#eee'
 						onPress={_handleSearch}
 						style={{
@@ -125,9 +127,9 @@ export default function HeaderApps ({ navigation }){
 					/>
 					<Ionicons
 						name='ios-filter'
-						size={32}
+						size={28}
 						color='#eee'
-						onPress={_handleSearch}
+						onPress={_handleSearchFilter}
 						style={{
 							margin : 8,
 						}}

@@ -50,7 +50,7 @@ let primeText = (color, text = 'Some text ') => (
 	</Text>
 );
 
-export default function Menu ({ navigation }){
+export default function Menu ({ navigation, menuSelect, setMenuSelect }){
 	let [
 		fontsLoaded,
 	] = useFonts({
@@ -74,21 +74,6 @@ export default function Menu ({ navigation }){
 		Jost_900Black_Italic,
 	});
 
-	const [
-		modalVisible,
-		setModalVisible,
-	] = useState(false);
-
-	const [
-		showChart,
-		setShowChart,
-	] = useState(false);
-
-	const [
-		menuSelect,
-		setMenuSelect,
-	] = useState(1);
-
 	if (!fontsLoaded) {
 		return <AppLoading />;
 	}
@@ -103,13 +88,13 @@ export default function Menu ({ navigation }){
 					padding        : 4,
 					paddingBottom  : 4,
 					flexDirection  : 'row',
-					justifyContent : 'space-arround',
+					justifyContent : 'center',
 					flexWrap       : 'wrap',
 				}}>
 				{[
 					{ id: 1, icon: 'ios-home-outline', name: 'Home' },
 					{ id: 2, icon: 'settings-outline', name: 'Profile' },
-					{ id: 3, icon: 'newspaper-outline', name: 'News' },
+					{ id: 3, icon: 'newspaper-outline', name: 'Offers ' },
 				].map((el) => (
 					<TouchableOpacity
 						onPress={() => {
@@ -126,7 +111,7 @@ export default function Menu ({ navigation }){
 						]}>
 						<Ionicons
 							name={el.icon}
-							size={28}
+							size={22}
 							color={
 
 									menuSelect == el.id ? '#333' :
@@ -163,7 +148,7 @@ const styles = StyleSheet.create({
 	},
 	contentMenu    : {
 		flexDirection  : 'row',
-		justifyContent : 'flex-start',
+		justifyContent : 'space-between',
 		alignItems     : 'center',
 		margin         : 2,
 		paddingTop     : 0,
@@ -173,7 +158,7 @@ const styles = StyleSheet.create({
 	},
 	itemMenu       : {
 		color      : '#fff',
-		fontSize   : 17,
+		fontSize   : 15,
 		fontWeight : 'bold',
 		fontFamily : 'Jost_600SemiBold',
 	},

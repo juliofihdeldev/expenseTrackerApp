@@ -21,7 +21,6 @@ let { width, height } = Dimensions.get('window');
 import { GlobalContext } from '../context/GlobalState';
 import { Ionicons } from '@expo/vector-icons';
 import AppLoading from 'expo-app-loading';
-var _ = require('lodash');
 
 import {
 	useFonts,
@@ -83,8 +82,6 @@ export default function Feeds ({ navigation }){
 	});
 
 	let { user, listBudget, getBudget } = useContext(GlobalContext);
-	let amount = listBudget.map((el) => parseFloat(el.amount)).reduce((el, acc) => el + acc, 0);
-	console.log('listBudget', JSON.stringify(listBudget));
 
 	const _handleSearch = () => console.log('Searching');
 	const [
@@ -102,11 +99,6 @@ export default function Feeds ({ navigation }){
 		setMenuSelect,
 	] = useState(1);
 
-	const _handleCharts = () => {
-		setModalVisible(true);
-		setShowChart(true);
-	};
-
 	let close = () => {
 		setModalVisible(!modalVisible);
 	};
@@ -115,73 +107,7 @@ export default function Feeds ({ navigation }){
 			getBudget();
 		};
 	}, []);
-	const renderItem = ({ item }) => (
-		<View
-			style={{
-				flexDirection   : 'row',
-				alignItems      : 'center',
-				justifyContent  : 'space-between',
-				backgroundColor : '#444',
-				padding         : 8,
-				borderRadius    : 40,
-				margin          : 8,
-			}}>
-			<View
-				style={{
-					flexDirection  : 'row',
-					alignItems     : 'center',
-					justifyContent : 'space-between',
-				}}>
-				<View
-					style={{
-						backgroundColor :
 
-								item.type != 'depense' ? 'green' :
-								'red',
-						height          : 50,
-						width           : 50,
-						borderRadius    : 25,
-						textAlign       : 'center',
-						justifyContent  : 'center',
-						alignItems      : 'center',
-					}}>
-					<Text style={{ fontWeight: 'bold', color: 'white' }}> {item.motif.slice(0, 2)}</Text>
-				</View>
-
-				<View style={{ marginLeft: 12 }}>
-					<Text
-						numberOfLines={1}
-						ellipsizeMode='tail'
-						style={{ fontWeight: 'bold', color: 'white', fontSize: 15, width: width / 2.5 }}>
-						{' '}
-						{item.motif}
-					</Text>
-					<Text
-						numberOfLines={2}
-						style={{
-							color : 'white',
-							width : width / 2.38,
-						}}>
-						{' '}
-						{item.details}
-					</Text>
-				</View>
-			</View>
-			<View>
-				<Text>
-					{' '}
-					{primeText(
-
-							item.type != 'depense' ? 'green' :
-							'red',
-
-							item.type != 'depense' ? ` + ${item.amount} HTG` :
-							` ${item.amount} HTG`,
-					)}
-				</Text>
-			</View>
-		</View>
-	);
 	if (!fontsLoaded) {
 		return <AppLoading />;
 	}
@@ -190,12 +116,14 @@ export default function Feeds ({ navigation }){
 			<SafeAreaView style={styles.container}>
 				<View>
 					<HeadersApps />
-					<Home />
+					{
+						menuSelect == 1 ? <Home /> :
+						<Home />}
 				</View>
 
 				<FAB
 					style={styles.fab}
-					large
+					small
 					icon='plus'
 					// navigate to form but modal
 					// onPress={() => navigation.navigate('ExpensForm')}
@@ -221,7 +149,7 @@ export default function Feeds ({ navigation }){
 					</View>
 				</Modal>
 
-				<Menu />
+				<Menu menuSelect={menuSelect} setMenuSelect={setMenuSelect} />
 			</SafeAreaView>
 		);
 	}
